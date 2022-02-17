@@ -24,7 +24,7 @@ namespace BMSBoardRegister
         private string mPassWD;
         private MySerial mSerial;
 
-        private static string MATER_URL = "http://192.168.0.30/bms_service";
+        private static string MATER_URL = "https://web.betterwhyiot.com/bms_service";
 
         public Form2()
         {
@@ -269,6 +269,12 @@ namespace BMSBoardRegister
         public string mVersion;
         public string mETC;
 
+        private bool ping()
+        {
+            HttpResponse("/v3/ping/", new JObject());
+            return true;
+        }
+
         private bool getBMSIdInfo()
         {
             JObject jsonReq = new JObject(
@@ -356,6 +362,8 @@ namespace BMSBoardRegister
                 setError("BMS ID를 가져오지 못했습니다.");
                 return;
             }
+
+            ping();
 
             setStatus("BMS ID 등록 정보를 가져오고 있습니다.", 50);
 

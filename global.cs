@@ -8,6 +8,6 @@ namespace BMSBoardRegister
 {
     public static class Const
     {
-        public const string __VERSION__ = "ver 1.0.0.0 [TEST SERVER]";
+        public const string __VERSION__ = "ver 1.0.0.0";
     }
 }

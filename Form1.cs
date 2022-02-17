@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows.Forms;
 
 namespace BMSBoardRegister
@@ -18,6 +19,62 @@ namespace BMSBoardRegister
 
         private MySerial mSerial = new MySerial();
         private string mLogTmp = "";
+
+        private System.Timers.Timer mLogTimer;
+        private object mLogLock = new object();
+
+        private void setLogTimer()
+        {
+            if (mLogTimer != null)
+                return;
+
+            mLogTimer = new System.Timers.Timer(100);
+            mLogTimer.Elapsed += onLogTimer;
+            mLogTimer.AutoReset = true;
+            mLogTimer.Enabled = true;
+
+        }
+
+        private void onLogTimer(Object sender, ElapsedEventArgs e)
+        {
+            writeLog();
+        }
+
+        private void stopLogTimer()
+        {
+            if (mLogTimer == null)
+                return;
+
+            mLogTimer.Stop();
+            mLogTimer.Dispose();
+            mLogTimer = null;
+
+            writeLog();
+        }
+
+        private void writeLog()
+        {
+            if(this.InvokeRequired)
+            {
+                try
+                {
+                    var d = new SafeCallNone(writeLog);
+                    this.Invoke(d);
+                }
+                catch(Exception e)
+                {
+                    return;
+                }
+            }
+            else
+            {
+                lock (mLogLock)
+                {
+                    textBox_log.AppendText(mLogTmp);
+                    mLogTmp = "";
+                }
+            }
+        }
 
         public Form1()
         {
@@ -65,33 +122,16 @@ namespace BMSBoardRegister
                 comboBox_etc.Enabled = false;
 
                 comboBox_serialport.Enabled = true;
+
+                stopLogTimer();
             }
         }
 
         public void LogSerialChar(char ch)
         {
-            if (this.InvokeRequired)
+            lock(mLogLock)
             {
-                try
-                {
-                    var d = new SafeCallChar(LogSerialChar);
-                    this.Invoke(d, new object[] { ch });
-                }
-                catch(Exception e)
-                {
-                    return;
-                }
-            }
-            else
-            {
-                if (checkBox_stoplog.Checked)
-                {
-                    mLogTmp += ch;
-                }
-                else
-                {
-                    textBox_log.AppendText("" + ch);
-                }
+                mLogTmp += ch;
             }
         }
 
@@ -159,12 +199,13 @@ namespace BMSBoardRegister
                     comboBox_etc.Enabled = true;
 
                     comboBox_serialport.Enabled = false;
+
+                    if(!checkBox_stoplog.Checked)
+                    {
+                        setLogTimer();
+                    }
                 }
             }
-        }
-
-        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
-        {
         }
 
         private void button_clearlog_Click(object sender, EventArgs e)
@@ -175,10 +216,16 @@ namespace BMSBoardRegister
 
         private void checkBox_stoplog_CheckedChanged(object sender, EventArgs e)
         {
-            if(!checkBox_stoplog.Checked)
+            if (checkBox_stoplog.Checked)
             {
-                textBox_log.AppendText(mLogTmp);
-                mLogTmp = "";
+                stopLogTimer();
+            }
+            else
+            {
+                if (mSerial.isOpen())
+                {
+                    setLogTimer();
+                }
             }
         }
 
@@ -191,7 +238,7 @@ namespace BMSBoardRegister
             }
         }
 
-        private void Form1_ForeColorChanged(object sender, EventArgs e)
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             mSerial.removeSerialClosedCallback(SerialClosed);
             mSerial.removeSerialDataCallback(LogSerialChar);
