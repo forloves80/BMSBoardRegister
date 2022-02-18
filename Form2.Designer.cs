@@ -46,8 +46,9 @@ namespace BMSBoardRegister
             this.label_state.AutoSize = true;
             this.label_state.Location = new System.Drawing.Point(12, 9);
             this.label_state.Name = "label_state";
-            this.label_state.Size = new System.Drawing.Size(0, 12);
+            this.label_state.Size = new System.Drawing.Size(63, 12);
             this.label_state.TabIndex = 1;
+            this.label_state.Text = "label state";
             // 
             // button_close
             // 

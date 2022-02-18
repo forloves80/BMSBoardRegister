@@ -157,6 +157,7 @@ namespace BMSBoardRegister
             {
                 textBox_registered.Text = dlg.mBmsIdExist ? "Registered" : "Unregistered";
                 textBox_bmsid.Text = dlg.mBMSId;
+                textBox_romversion.Text = dlg.mRomVersion;
 
                 string oldText = comboBox_boardversion.Text;
                 comboBox_boardversion.Items.Clear();

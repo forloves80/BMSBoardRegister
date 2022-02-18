@@ -54,6 +54,8 @@ namespace BMSBoardRegister
             this.textBox_log = new System.Windows.Forms.TextBox();
             this.button_clearlog = new System.Windows.Forms.Button();
             this.checkBox_stoplog = new System.Windows.Forms.CheckBox();
+            this.textBox_romversion = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -159,6 +161,8 @@ namespace BMSBoardRegister
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.textBox_romversion);
+            this.groupBox3.Controls.Add(this.label6);
             this.groupBox3.Controls.Add(this.button_save);
             this.groupBox3.Controls.Add(this.comboBox_etc);
             this.groupBox3.Controls.Add(this.comboBox_boardversion);
@@ -171,14 +175,14 @@ namespace BMSBoardRegister
             this.groupBox3.Controls.Add(this.button_get_n_check);
             this.groupBox3.Location = new System.Drawing.Point(12, 160);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(287, 189);
+            this.groupBox3.Size = new System.Drawing.Size(287, 210);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Board Infomation";
             // 
             // button_save
             // 
-            this.button_save.Location = new System.Drawing.Point(9, 155);
+            this.button_save.Location = new System.Drawing.Point(9, 182);
             this.button_save.Name = "button_save";
             this.button_save.Size = new System.Drawing.Size(268, 23);
             this.button_save.TabIndex = 13;
@@ -189,7 +193,7 @@ namespace BMSBoardRegister
             // comboBox_etc
             // 
             this.comboBox_etc.FormattingEnabled = true;
-            this.comboBox_etc.Location = new System.Drawing.Point(100, 129);
+            this.comboBox_etc.Location = new System.Drawing.Point(100, 156);
             this.comboBox_etc.Name = "comboBox_etc";
             this.comboBox_etc.Size = new System.Drawing.Size(177, 20);
             this.comboBox_etc.TabIndex = 12;
@@ -198,7 +202,7 @@ namespace BMSBoardRegister
             // 
             this.comboBox_boardversion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_boardversion.FormattingEnabled = true;
-            this.comboBox_boardversion.Location = new System.Drawing.Point(100, 103);
+            this.comboBox_boardversion.Location = new System.Drawing.Point(100, 130);
             this.comboBox_boardversion.Name = "comboBox_boardversion";
             this.comboBox_boardversion.Size = new System.Drawing.Size(177, 20);
             this.comboBox_boardversion.TabIndex = 2;
@@ -214,7 +218,7 @@ namespace BMSBoardRegister
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(41, 132);
+            this.label8.Location = new System.Drawing.Point(41, 159);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(53, 12);
             this.label8.TabIndex = 10;
@@ -223,7 +227,7 @@ namespace BMSBoardRegister
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(9, 106);
+            this.label7.Location = new System.Drawing.Point(9, 133);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(85, 12);
             this.label7.TabIndex = 9;
@@ -272,7 +276,7 @@ namespace BMSBoardRegister
             this.groupBox4.Controls.Add(this.checkBox_stoplog);
             this.groupBox4.Location = new System.Drawing.Point(305, 12);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(465, 337);
+            this.groupBox4.Size = new System.Drawing.Size(465, 358);
             this.groupBox4.TabIndex = 3;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Serial Log";
@@ -309,11 +313,28 @@ namespace BMSBoardRegister
             this.checkBox_stoplog.UseVisualStyleBackColor = true;
             this.checkBox_stoplog.CheckedChanged += new System.EventHandler(this.checkBox_stoplog_CheckedChanged);
             // 
+            // textBox_romversion
+            // 
+            this.textBox_romversion.Location = new System.Drawing.Point(100, 103);
+            this.textBox_romversion.Name = "textBox_romversion";
+            this.textBox_romversion.ReadOnly = true;
+            this.textBox_romversion.Size = new System.Drawing.Size(177, 21);
+            this.textBox_romversion.TabIndex = 15;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(16, 106);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(78, 12);
+            this.label6.TabIndex = 14;
+            this.label6.Text = "Rom Version";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 355);
+            this.ClientSize = new System.Drawing.Size(784, 378);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -363,6 +384,8 @@ namespace BMSBoardRegister
         private System.Windows.Forms.TextBox textBox_log;
         private System.Windows.Forms.Button button_clearlog;
         private System.Windows.Forms.CheckBox checkBox_stoplog;
+        private System.Windows.Forms.TextBox textBox_romversion;
+        private System.Windows.Forms.Label label6;
     }
 }
 

@@ -96,7 +96,16 @@ namespace BMSBoardRegister
             mPassWD = passwd;
             mSerial = serial;
 
+            mBMSId = null;
+            mRomVersion = null;
+            mVersion = null;
+            mETC = null;
+            mVersionList = null;
+            mETCList = null;
+            mBmsIdExist = false;
+
             Text = "Get And Check Process";
+
             mRet = false;
             threadType = 0;
             ShowDialog();
@@ -121,15 +130,16 @@ namespace BMSBoardRegister
         public bool mRet;
         private byte[] mBuf = new byte[25];
         private int mBufPos = 0;
+        private string mBMSData;
         public string mBMSId;
+        public string mRomVersion;
 
         private static byte[] HEADSIGN = { (byte)'B', (byte)'D', 0, 20 };
         private EventWaitHandle recvEvt = new EventWaitHandle(false, EventResetMode.ManualReset);
 
         public void onSerialData(char ch)
         {
-            
-            if (mBMSId != null)
+            if (mBMSData != null)
                 return;
 
             mBuf[mBufPos] = (byte)ch;
@@ -153,7 +163,7 @@ namespace BMSBoardRegister
             }
             else if (mBufPos == 3)
             {
-                if(mBuf[2] == 0)
+                if(mBuf[2] == 0 || mBuf[2] == 80)
                 {
                     return;
                 }
@@ -169,7 +179,7 @@ namespace BMSBoardRegister
             {
                 if (mBuf[24] == checkSum(mBuf, 24))
                 {
-                    int len = 0;
+                    int len = 20;
                     for(int i = 0; i < 20; i++)
                     {
                         if(mBuf[i + 4] == 0)
@@ -178,7 +188,7 @@ namespace BMSBoardRegister
                             break;
                         }
                     }
-                    mBMSId = Encoding.Default.GetString(mBuf, 4, len);
+                    mBMSData = Encoding.Default.GetString(mBuf, 4, len);
                     recvEvt.Set();
                     return;
                 }
@@ -196,7 +206,15 @@ namespace BMSBoardRegister
                 bool headexist = true;
                 for(int j = 0; j < left; j++)
                 {
-                    if (mBuf[i + j] != HEADSIGN[j])
+                    if(j == 2)
+                    {
+                        if (mBuf[i + j] != 0 && mBuf[i + j] != 80)
+                        {
+                            headexist = false;
+                            break;
+                        }
+                    }
+                    else if (mBuf[i + j] != HEADSIGN[j])
                     {
                         headexist = false;
                         break;
@@ -216,6 +234,46 @@ namespace BMSBoardRegister
             }
 
             mBufPos = 0;
+        }
+
+        private bool getBmsData(int pos)
+        {
+            mBufPos = 0;
+            mBMSData = null;
+            recvEvt.Reset();
+            mSerial.addSerialDataCallback(onSerialData);
+
+            byte[] buf = new byte[5];
+            buf[0] = (byte)'B';
+            buf[1] = (byte)'R';
+            buf[2] = (byte)pos;
+            buf[3] = (byte)20;
+            buf[4] = checkSum(buf, 4);
+
+            mSerial.write(buf);
+
+            recvEvt.WaitOne(5000);
+            mSerial.removeSerialDataCallback(onSerialData);
+
+            if (mBMSData != null)
+            {
+                if(pos == 0)
+                {
+                    mBMSId = mBMSData;
+                }
+                else if(pos == 80)
+                {
+                    mRomVersion = mBMSData;
+                }
+                else
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         private JObject HttpResponse(string sub_url, JObject data)
@@ -340,32 +398,19 @@ namespace BMSBoardRegister
         {
             setStatus("try to open serial port", 0);
 
-            mBufPos = 0;
-            mBMSId = null;
-            recvEvt.Reset();
-
-            mSerial.addSerialDataCallback(onSerialData);
             setStatus("BMS ID를 가져오고 있습니다.", 10);
-            byte[] buf = new byte[5];
-            buf[0] = (byte)'B';
-            buf[1] = (byte)'R';
-            buf[2] = (byte)0;
-            buf[3] = (byte)20;
-            buf[4] = checkSum(buf, 4);
-            mSerial.write(buf);
-
-            recvEvt.WaitOne(5000);
-            mSerial.removeSerialDataCallback(onSerialData);
-
-            if (mBMSId == null)
+            if(!getBmsData(0))
             {
                 setError("BMS ID를 가져오지 못했습니다.");
                 return;
             }
 
+            setStatus("BMS Rom Version을 가져오고 있습니다.", 30);
+            getBmsData(80);
+
             ping();
 
-            setStatus("BMS ID 등록 정보를 가져오고 있습니다.", 50);
+            setStatus("BMS ID 등록 정보를 가져오고 있습니다.", 60);
 
             if(!getBMSIdInfo())
             {
