@@ -252,7 +252,7 @@ namespace BMSBoardRegister
 
             mSerial.write(buf);
 
-            recvEvt.WaitOne(5000);
+            recvEvt.WaitOne(2000);
             mSerial.removeSerialDataCallback(onSerialData);
 
             if (mBMSData != null)
